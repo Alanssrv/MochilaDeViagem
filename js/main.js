@@ -1,13 +1,17 @@
 const form = document.getElementById('novoItem');
 const lista = document.getElementById('lista');
+const itens = [];
 
 form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    const nome = e.target.elements['nome'].value;
-    const quantidade = e.target.elements['quantidade'].value;
+    const nome = e.target.elements['nome'];
+    const quantidade = e.target.elements['quantidade'];
 
-    criarElemento(nome, quantidade);
+    criarElemento(nome.value, quantidade.value);
+
+    nome.value = '';
+    quantidade.value = '';
 });
 
 function criarElemento(nome, quantidade) {
@@ -17,12 +21,20 @@ function criarElemento(nome, quantidade) {
 
         const quantidadeItem = document.createElement('strong');
         quantidadeItem.textContent = quantidade;
-        console.log(quantidadeItem);
         
         novoItem.appendChild(quantidadeItem);
         novoItem.innerHTML += nome;
         
         lista.appendChild(novoItem);
+
+        const itemLocalStorage = {
+            'nome': nome,
+            'quantidade': quantidade
+        };
+
+        itens.push(itemLocalStorage);
+
+        localStorage.setItem('itens', JSON.stringify(itens));
     } else {
         alert('Insira valores nos campos nome e quantidade');
     }
