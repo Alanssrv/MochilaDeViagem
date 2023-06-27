@@ -1,6 +1,10 @@
 const form = document.getElementById('novoItem');
 const lista = document.getElementById('lista');
-const itens = [];
+const itens = JSON.parse(localStorage.getItem('itens')) || [];
+
+itens.forEach(item => {
+    criarElemento(item);
+});
 
 form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -8,34 +12,34 @@ form.addEventListener('submit', (e) => {
     const nome = e.target.elements['nome'];
     const quantidade = e.target.elements['quantidade'];
 
-    criarElemento(nome.value, quantidade.value);
+    const item = {
+        'nome': nome.value,
+        'quantidade': quantidade.value
+    };
 
+    if (!item.nome || !item.quantidade) {
+        alert('Insira valores nos campos nome e quantidade');
+        return;
+    }
+
+    criarElemento(item);
+    itens.push(item);
+    localStorage.setItem('itens', JSON.stringify(itens));
+    
     nome.value = '';
     quantidade.value = '';
+
 });
 
-function criarElemento(nome, quantidade) {
-    if (nome && quantidade) {
-        const novoItem = document.createElement('li');
-        novoItem.classList.add('item');
+function criarElemento(item) {
+    const novoItem = document.createElement('li');
+    novoItem.classList.add('item');
 
-        const quantidadeItem = document.createElement('strong');
-        quantidadeItem.textContent = quantidade;
-        
-        novoItem.appendChild(quantidadeItem);
-        novoItem.innerHTML += nome;
-        
-        lista.appendChild(novoItem);
-
-        const itemLocalStorage = {
-            'nome': nome,
-            'quantidade': quantidade
-        };
-
-        itens.push(itemLocalStorage);
-
-        localStorage.setItem('itens', JSON.stringify(itens));
-    } else {
-        alert('Insira valores nos campos nome e quantidade');
-    }
+    const quantidadeItem = document.createElement('strong');
+    quantidadeItem.textContent = item.quantidade;
+    
+    novoItem.appendChild(quantidadeItem);
+    novoItem.innerHTML += item.nome;
+    
+    lista.appendChild(novoItem);
 }
